@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    h1 { color: #333; }
+    #board { margin: 20px auto; width: 400px; height: 400px; background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>My Chess Game</h1>
+  <div id="board">[Chessboard will go here]</div>
+  <button onclick="makeMove()">Make Move</button>
+
+  <script>
+    async function makeMove() {
+      let response = await fetch("/move", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ move: "e2e4" })
+      });
+      let data = await response.json();
+      alert("Backend says: " + data.result);
+    }
+  </script>
+</body>
+</html>
