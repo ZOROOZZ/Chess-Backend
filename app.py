@@ -17,6 +17,10 @@ board = [
     ["♖","♘","♗","♕","♔","♗","♘","♖"]
 ]
 
+@app.route("/")
+def home():
+    return "Chess Backend is running!"
+
 @app.route("/move", methods=["POST"])
 def move():
     global board
@@ -29,11 +33,11 @@ def move():
     if piece == "":
         return jsonify({"valid": False, "board": board})
 
-    # ❗ Here you would add proper chess logic
+    # ❗ Simple move (no chess rules yet)
     board[to_r][to_c] = piece
     board[fr_r][fr_c] = ""
     return jsonify({"valid": True, "board": board})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render gives PORT env variable
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
