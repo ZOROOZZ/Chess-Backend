@@ -1,12 +1,13 @@
-import express from "express";
-const app = express();
-const PORT = process.env.PORT || 3000;
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
 
-// Simple API endpoint
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from Backend 🚀" });
-});
+    if (url.pathname === "/api/hello") {
+      return new Response(JSON.stringify({ message: "Hello from Backend 🚀" }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
 
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
-});
+    return new Response("Not Found", { status: 404 });
+  }
+};
