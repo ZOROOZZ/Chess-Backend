@@ -2,35 +2,44 @@ export class ChessGame {
   constructor(state, env) {
     this.state = state;
     this.env = env;
-    this.moves = [];
+    this.clients = [];
   }
 
-  async fetch(request) {
-    let url = new URL(request.url);
+  async fetch(req) {
+    let url = new URL(req.url);
 
-    if (url.pathname === "/move") {
-      let body = await request.json();
-      this.moves.push(body.move);
+    // Handle WebSocket connections
+    if (url.pathname === "/join") {
+      const [client, server] = Object.values(new WebSocketPair());
 
-      return new Response(JSON.stringify({ ok: true, moves: this.moves }), {
-        headers: { "Content-Type": "application/json" }
-      });
+      await this.handleSession(server);
+      return new Response(null, { status: 101, webSocket: client });
     }
 
-    if (url.pathname === "/state") {
-      return new Response(JSON.stringify({ moves: this.moves }), {
-        headers: { "Content-Type": "application/json" }
-      });
-    }
+    return new Response("Chess backend is running!", { status: 200 });
+  }
 
-    return new Response("ChessGame Durable Object", { status: 200 });
+  async handleSession(ws) {
+    ws.accept();
+    this.clients.push(ws);
+
+    ws.addEventListener("message", (evt) => {
+      // Broadcast received move to all players
+      for (let client of this.clients) {
+        if (client !== ws) {
+          client.send(evt.data);
+        }
+      }
+    });
+
+    ws.addEventListener("close", () => {
+      this.clients = this.clients.filter((c) => c !== ws);
+    });
   }
 }
 
 export default {
-  async fetch(request, env) {
-    let id = env.ChessGame.idFromName("default");
-    let obj = env.ChessGame.get(id);
-    return obj.fetch(request);
-  }
+  async fetch(req, env) {
+    return env.ChessGame.fetch(req);
+  },
 };
