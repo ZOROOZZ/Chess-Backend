@@ -1,3 +1,11 @@
-name = "my-backend"
-main = "server.js"         # Your backend entrypoint file
-compatibility_date = "2025-09-13"
+name = "chess-backend"
+main = "src/index.js"
+compatibility_date = "2023-09-01"
+
+[[durable_objects]]
+name = "ChessGame"
+class_name = "ChessGame"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["ChessGame"]
