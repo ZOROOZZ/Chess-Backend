@@ -1,17 +1,11 @@
 name = "chess-backend"
 main = "src/index.js"
-compatibility_date = "2025-09-13"
+compatibility_date = "2024-09-13"
 
-# Durable Object binding
 [[durable_objects.bindings]]
 name = "ChessGame"
 class_name = "ChessGame"
 
-# Durable Object migration (required for first deploy)
 [[migrations]]
-tag = "v1"
-new_classes = ["ChessGame"]
-
-# Optional: enable WebSocket support
-[observability]
-enabled = true
+tag = "init"
+new_sqlite_classes = ["ChessGame"]
